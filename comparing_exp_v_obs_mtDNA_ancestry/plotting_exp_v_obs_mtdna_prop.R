@@ -43,7 +43,7 @@ colnames(mmtprop.pop)[c(2,3)]<-c("anc.pop","mtprop")
 
 mt.plt<-ggplot()+
   geom_boxplot(data=dmfest.boot,aes(x=anc.pop,ymin=lower,ymax=upper,lower=lower,upper=upper,middle=upper,fill=anc.pop),color=NA,alpha=0.5,position=position_dodge(),stat="identity",show.legend = T)+
-  geom_errorbar(data=mmtprop.pop,aes(x=anc.pop,ymin=mtprop,ymax=mtprop),stat="identity",show.legend = F)+
+  geom_errorbar(data=mmtprop.pop[-which(mmtprop.pop$admx.pop%in%c("CEU","YRI")),],aes(x=anc.pop,ymin=mtprop,ymax=mtprop),stat="identity",show.legend = F)+
   facet_wrap(~admx.pop,scales="free")+
   theme_bw()+
   scale_fill_manual(values=c("#8da0cb","#fc8d62","#66c2a5"))+
