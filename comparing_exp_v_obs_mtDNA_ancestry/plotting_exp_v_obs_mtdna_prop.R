@@ -49,6 +49,7 @@ mt.plt<-ggplot()+
   scale_fill_manual(values=c("#8da0cb","#fc8d62","#66c2a5"))+
   #scale_color_manual(values=c("#8da0cb","#fc8d62","#66c2a5"),guide=F)+
   labs(x="Ancestry",y="Expected/Observed MT haplogroup proportion",fill="Ancestry")+
-  theme(axis.text.x = element_blank())
+  theme(axis.text.x = element_blank())+
+  ylim(c(0,1))
 
 ggsave("mt_exp_vs_obs.pdf",mt.plt,height=5,width=7)
