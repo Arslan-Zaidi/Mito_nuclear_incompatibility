@@ -71,7 +71,7 @@ fig_2b<-ggtern()+
   labs(color="Population",x="EUR",y="AFR",z="NAT",title="B.")
 
 fig_2c<-ggtern()+
-  geom_point(data=q3,aes(C1,C2,C3,color=Major_Haplogroup),alpha=0.6)+
+  geom_point(data=q3[which(is.na(q3$Major_Haplogroup)=="FALSE"),],aes(C1,C2,C3,color=Major_Haplogroup),alpha=0.6)+
   theme_bw()+
   theme(legend.text=element_text(size=16),
         axis.text=element_text(size=14),
