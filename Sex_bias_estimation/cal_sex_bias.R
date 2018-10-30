@@ -2,7 +2,7 @@ library(plyr)
 library(reshape2)
 library(ggplot2)
 
-#setwd("/Users/Azaidi/Documents/mtproj_files/mitonuclear_project/mtnuc_organization/sex_biased_admixture")
+##setwd("/User/____/Documents/Mito_nuclear_incompatibility/Sex_bias_estimation")
 
 #read pop file
 pop<-read.table('../Data_tables/pop_1kg.txt',header=T,stringsAsFactors = F)
@@ -12,19 +12,13 @@ colnames(pop)<-c("IID","Sex","Population")
 admx.pops<-c("ACB","ASW","CLM","MXL","PEL","PUR")
 
 #read autosomal ancestry
-#glanc.autosome<-read.table("~/Documents/mtproj_files/mitonuclear_project/local_ancestry_1kgcalls/viterbi/clean_viterbi/AMR_04182018.autosome.glanc",header=T)
-qfile.autosome<-read.table("~/Documents/mtproj_files/mitonuclear_project/mtnuc_organization/admixture_results/Autosome/1kg_nam_flipped.3.Q",header=F)
+qfile.autosome<-read.table("../ADMIXTURE_ancestry/Autosome/1kg_nam_flipped.3.Q",header=F)
 colnames(qfile.autosome)<-c("European","African","Native_American")
-auto.fam<-read.table('~/Documents/mtproj_files/mitonuclear_project/mtnuc_organization/admixture_results/Autosome/1kg_nam_flipped.fam',header=F)
+auto.fam<-read.table('../ADMIXTURE_ancestry/Autosome/1kg_nam_flipped.fam',header=F)
 auto.fam<-auto.fam[,c(1:2)]
 colnames(auto.fam)<-c("FID","IID")
 qfile.autosome<-cbind(auto.fam,qfile.autosome)
 qfile.autosome<-merge(qfile.autosome,pop,by="IID")
-#glanc.autosome<-merge(glanc.autosome,pop,by="IID")
-#colnames(glanc.autosome)[c(2:4)]<-c("European","African","Native_American")
-
-#calculate mean ancestry across all individuals
-#fpop.auto<-ddply(glanc.autosome[,c('Population','European','African','Native_American')],.(Population),colwise(mean))
 
 #calculate average autosomal ancestry for each population
 f.pop.auto<-ddply(qfile.autosome[,c("European","African","Native_American","Population")],.(Population),summarize,European=mean(European),African=mean(African),Native_American=mean(Native_American))
@@ -99,6 +93,7 @@ sex.bias.pop<-function(pop){
   return(dat)
 }
 
+# mfestimates = Male & Female Estimates
 mfestimates<-sapply(admx.pops,sex.bias.pop,simplify=F,USE.NAMES=T)
 mfestimates<-do.call(rbind,mfestimates)
 mfestimates<-melt(mfestimates,id.vars=c("anc.pop","admx.pop"))
@@ -114,7 +109,7 @@ mfestimates<-ddply(mfestimates,.(admx.pop,sex),function(x){
 
 #plot m and f proportions for each population
 mf.plt<-ggplot(mfestimates,aes(sex,norm.proportion,fill=anc.pop))+
-  geom_bar(stat="density")+
+  geom_bar(stat="identity")+
   facet_wrap(~admx.pop)+
   scale_fill_manual(values=c("#66c2a5","#fc8d62","#8da0cb"))+
   theme_bw()+
@@ -160,6 +155,7 @@ for(i in 1:1000){
 
 
 mfest.boot<-mfest.boot[-which(mfest.boot$bootstrap==0),]
+# Calculate mean and CI for each ancestral and admixed population, by male and female contributions.
 dmfest.boot<-ddply(mfest.boot,.(anc.pop,admx.pop,sex),summarize,mean.prop=mean(norm.proportion),lower=quantile(norm.proportion,probs=0.025),upper=quantile(norm.proportion,probs=0.975))
 boot.plt<-ggplot(dmfest.boot)+
   geom_bar(aes(sex,mean.prop,fill=anc.pop,color=anc.pop),alpha=0.7,stat="identity",position=position_dodge())+
