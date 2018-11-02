@@ -1,7 +1,7 @@
 library(data.table)
 library(ggplot2)
 
-#write function to simulate variation in local ancestry
+#write function to simulate variation in local ancestry (over certain 'g' generations and 'nind' # of individuals)
 sim.admix<-function(a0,b0,c0,g,nind=1250){
   nchrom<-nind*2
   nchrom.a0<-a0*nchrom
@@ -30,12 +30,13 @@ sim.admix<-function(a0,b0,c0,g,nind=1250){
 
 
 #read local ancestry frequency for the population of interest
-avg.lanc<-fread('lanc_popavg_CLM.txt',sep="\t",header=T)
+avg.lanc<-fread('./Neutral_simulations/CLM/lanc_popavg_CLM.txt',sep="\t",header=T)
 avg.lanc$hg19chr<-paste("chr",avg.lanc$chr,sep="")
 
-#subsample 1000 loci
+#subsample 10000 loci
 avg.lanc.red<-avg.lanc[sample(nrow(avg.lanc),10000),]
 
+#Simulate variation in local ancestry in Colombian (CLM) population over 14 generations with N=1250.
 output<-as.data.frame(t(replicate(10000,sim.admix(mean(avg.lanc.red$afr.lanc),mean(avg.lanc.red$eur.lanc),mean(avg.lanc.red$nat.lanc),14))))
 colnames(output)<-c("African","European","Native_American")
 
@@ -72,7 +73,7 @@ ggsave("qq_autosomal_CLM.pdf",qq.plot,height=5,width=10)
 
 
 #loading sex specific ancestry contributions for each population
-mf.props<-read.table("../../Sex_bias_estimation//sex_spec_ancestry_contribs_avg.txt",header=T)
+mf.props<-read.table("./Sex_bias_estimation/sex_spec_ancestry_contribs_avg.txt",header=T)
 mf.clm<-mf.props[which(mf.props$admx.pop=="CLM" & mf.props$sex=="f"),]
 
 #write function to simulate variation in mtDNA given proportion of females
@@ -101,15 +102,15 @@ sim.mt<-function(af,bf,cf,g,nind=1250){
   return(c(nchrom.af,nchrom.bf,nchrom.cf)/nchrom)
 }
 
-#simulate
+#simulate variation in mtDNA
 mt.sim.dat<-as.data.frame(t(replicate(10000,sim.mt(mf.clm$proportion[3],mf.clm$proportion[2],mf.clm$proportion[3],14))))
 colnames(mt.sim.dat)<-c("African","European","Native_American")
 
 #read observed mt frequencies
-mt.obs.dat<-read.table("../../Data_tables//mtprop_table.txt",header=T)
+mt.obs.dat<-read.table("./Data_tables//mtprop_table.txt",header=T)
 mt.obs.pur<-mt.obs.dat[which(mt.obs.dat$Population=="CLM"),]
 
-#plt simulated data against observed mt haplogroup freuency
+#plt simulated data against observed mt haplogroup frequency
 mt.sim.dat<-melt(mt.sim.dat)
 colnames(mt.sim.dat)<-c("Ancestry","sim.f")
 
