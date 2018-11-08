@@ -1,4 +1,4 @@
-#script to generate bootstrapped loal ancestry estimates for genic windows
+#script to generate bootstrapped local ancestry estimates for genic windows
 #load dependencies
 library(data.table)
 library(plyr)
@@ -7,6 +7,8 @@ args<-commandArgs(TRUE)
 pop<-args[1]
 n.bootstraps<-as.numeric(args[2])
 weight<-as.logical(args[3])
+# Populations ("ACB", "ASW", "PUR", "MXL", "CLM", "PEL")
+
 
 message("loading lanc file")
 
@@ -14,6 +16,7 @@ message("loading lanc file")
 lanc.mt<-fread(paste("mt_lanc_annot_",pop,".bed",sep=""),header=F,sep="\t")
 
 colnames(lanc.mt)<-c("gene.chr","gene.start","gene.stop","gene.name","broad.category","narrow.category","snp.chr","snp.start","snp.stop","eur.lanc","afr.lanc","nat.lanc")
+# Broad category ("mt" or "non-mt" genes); Narrow category ("high-mt", "low-mt", "non-mt" genes)
 
 #remove rows where snps are missing
 lanc.mt<-lanc.mt[which(lanc.mt$snp.chr!="."),]
@@ -31,7 +34,8 @@ avg.eur.lanc<-mean(lanc.mt$eur.lanc)
 avg.afr.lanc<-mean(lanc.mt$afr.lanc)
 avg.nat.lanc<-mean(lanc.mt$nat.lanc)
 
-#write function to bootstrap for a specific function category
+#write function to bootstrap for a specific function category 
+# (subsampling amount is limited to 164 genes to match the smallest category)
 boot.dev<-function(functional_cat,nboot,weighted=FALSE){
   lanc.deviation<-matrix(NA,nrow=nboot,ncol=3)
   
