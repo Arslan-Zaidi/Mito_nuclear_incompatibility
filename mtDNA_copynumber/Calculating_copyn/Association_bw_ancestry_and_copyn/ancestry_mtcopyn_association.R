@@ -8,7 +8,7 @@ library(gridExtra)
 mt.copyn<-read.table("mtdna_copyn_allsamples_06012018.txt",header=T,sep="\t")
 
 #load info about DNA source
-DNAsrc<-read.table("../../../Data_tables/1kg_DNAsource.txt",header=T,sep="\t")
+DNAsrc<-read.table("../../Data_tables/1kg_DNAsource.txt",header=T,sep="\t")
 colnames(DNAsrc)<-c("IID","pop","ebv.cvrg","dna.source","has.blood")
 
 #add source info
@@ -28,15 +28,15 @@ ggsave('lowcov_mtdna_copyn_distribution_06012018.pdf',plt,height=5,width=10)
 mt.copyn<-mt.copyn[which(mt.copyn$med.mtcopyn>250),]
 
 #read global ancestry for these people
-qfile<-read.table("../../../ADMIXTURE_ancestry/Autosome/1kg_nam_flipped.3.Q",header=F)
+qfile<-read.table("../../ADMIXTURE_ancestry/Autosome/1kg_nam_flipped.3.Q",header=F)
 #read fam file corresponding to the qfile
-fam<-read.table("../../../ADMIXTURE_ancestry/Autosome/1kg_nam_flipped.fam",header=F)
+fam<-read.table("../../ADMIXTURE_ancestry/Autosome/1kg_nam_flipped.fam",header=F)
 fam<-fam[,c(1:2)]
 colnames(fam)<-c("FID","IID")
 global.anc<-cbind(fam,qfile)
 
 #read pop file
-pop.file<-read.table("../../../Data_tables/pop_1kg.txt",header=T)
+pop.file<-read.table("../../Data_tables/pop_1kg.txt",header=T)
 #add pop info to global.anc file
 global.anc<-join(global.anc,pop.file,by="IID")
 
@@ -48,7 +48,7 @@ mt.copyn.anc<-join(mt.copyn[,c(1,3)],global.anc,by="IID")
 
 #load mthaplogroup info
 #load haplogroup information 
-mt.haplo<-read.table("../../../Data_tables/AMR_mt.haplo",header=T,sep="\t")
+mt.haplo<-read.table("../../Data_tables/AMR_mt.haplo",header=T,sep="\t")
 colnames(mt.haplo)<-c("IID","Sex","Population","major_haplogroup")
 #group haplo into regional categories
 mt.haplo$region_haplogroup<-NA

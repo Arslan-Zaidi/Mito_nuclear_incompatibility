@@ -1,22 +1,22 @@
 library(ggplot2)
 library(plyr)
 
-#setwd("~/Documents/mtproj_files/mitonuclear_project/mtnuc_organization/Copy_number/copyn_analysis_06012018/")
+#setwd("~/Mito_nuclear_incompatibility/mtDNA_copynumber/Calculating_copyn/Association_bw_ancestry_and_copyn")
 
-ceu.copyn<-read.table("../Low_coverage/CEU/CEU.header.mtdna_no",header=T,sep="\t")
-yri.copyn<-read.table("../Low_coverage/YRI/YRI.header.mtdna_no",header=T,sep="\t")
-admx.copyn<-read.table("../Low_coverage/Americans_lowcov.mtdna_no/Americans_lowcov.mtdna_no",header=F,sep="\t")
+ceu.copyn<-read.table("../Calculating_copyn/Low_coverage/CEU/CEU.header.mtdna_no",header=T,sep="\t")
+yri.copyn<-read.table("../Calculating_copyn/Low_coverage/YRI/YRI.header.mtdna_no",header=T,sep="\t")
+admx.copyn<-read.table("../Calculating_copyn/Low_coverage/Admixed_Americans/Americans_lowcov.mtdna_no",header=F,sep="\t")
 colnames(admx.copyn)<-colnames(ceu.copyn)
 
 
 ceu.copyn$pop<-"CEU"
 yri.copyn$pop<-"YRI"
 
-admx.pop<-read.table("../../../Data_tables/pop_1kg.txt",header=T,sep="\t")
+admx.pop<-read.table("../../Data_tables/pop_1kg.txt",header=T,sep="\t")
 admx.copyn<-join(admx.copyn,admx.pop[,c("IID","pop")])
 
 all.copyn<-rbind(ceu.copyn,yri.copyn,admx.copyn)
-#remove samples with less than 250 mtdna_nopyn - these are blood samples
+#remove samples with less than 250 mtdna_copyn - these are blood samples
 
 
 #parent.copyn<-rbind(ceu.copyn,yri.copyn)
